@@ -22,27 +22,6 @@ const Footer = () => {
               Multimodal AI-generated content detection system
             </p>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-8">
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Resources</h3>
-              <Link to="/documentation" className="text-sm text-muted-foreground hover:text-primary transition-smooth">Documentation</Link>
-              <Link to="/api" className="text-sm text-muted-foreground hover:text-primary transition-smooth">API</Link>
-              <Link to="/research" className="text-sm text-muted-foreground hover:text-primary transition-smooth">Research</Link>
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Legal</h3>
-              <Link to="/privacy" className="text-sm text-muted-foreground hover:text-primary transition-smooth">Privacy Policy</Link>
-              <Link to="/terms" className="text-sm text-muted-foreground hover:text-primary transition-smooth">Terms of Service</Link>
-            </div>
-            
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-medium">Connect</h3>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-smooth">GitHub</a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-primary transition-smooth">Twitter</a>
-            </div>
-          </div>
         </div>
         
         <div className="mt-8 pt-4 border-t border-border">
