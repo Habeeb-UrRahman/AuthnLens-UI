@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -12,7 +12,7 @@ const Navbar = () => {
           className="text-xl font-medium text-primary flex items-center gap-2 transition-smooth hover:opacity-80"
         >
           <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
-            <Shield className="w-4 h-4 text-primary" />
+            <Search className="w-4 h-4 text-primary" />
           </div>
           <span>AuthenLens</span>
         </Link>
