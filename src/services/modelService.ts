@@ -181,9 +181,16 @@ class ModelService {
     // Convert to tensor and prepare for model input
     const tensorInput = tf.tensor2d(spectogramData).expandDims();
     
-    // Ensure the input has the right shape by resizing if needed
+    // Ensure the input has the right shape by reshaping to 3D tensor before using resizeBilinear
+    // Create a proper 3D tensor with shape [height, width, channels]
+    const reshapedInput = tf.reshape(
+      tensorInput, 
+      [spectogramData.length, spectogramData[0].length, 1]
+    ) as tf.Tensor3D;
+    
+    // Now we can use resizeBilinear which expects a 3D or 4D tensor
     const resizedInput = tf.image.resizeBilinear(
-      tensorInput.reshape([spectogramData.length, spectogramData[0].length, 1]), 
+      reshapedInput, 
       [128, 128]
     ).expandDims();
     
@@ -194,6 +201,7 @@ class ModelService {
     // Cleanup
     audioTensor.dispose();
     tensorInput.dispose();
+    reshapedInput.dispose();
     resizedInput.dispose();
     prediction.dispose();
     

@@ -119,7 +119,7 @@ const Index = () => {
       <main className="flex-1">
         <Hero />
         
-        <section className="py-16">
+        <section className="py-16" id="content-type-section">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <MediaSelector 
@@ -157,7 +157,7 @@ const Index = () => {
           </div>
         </section>
         
-        <section className="py-16 bg-muted/30">
+        <section className="py-16 bg-muted/30" id="how-it-works">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center">
               <h2 className="text-3xl font-bold mb-4">How It Works</h2>

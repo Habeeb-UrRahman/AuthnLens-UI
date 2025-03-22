@@ -3,6 +3,13 @@ import React from 'react';
 import { ArrowRight, Shield, FileSearch } from 'lucide-react';
 
 const Hero = () => {
+  const scrollToSection = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="relative w-full py-24 overflow-hidden">
       {/* Animated background elements */}
@@ -30,11 +37,17 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-white font-medium transition-smooth hover:bg-primary/90">
+            <button 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary text-white font-medium transition-smooth hover:bg-primary/90"
+              onClick={() => scrollToSection('content-type-section')}
+            >
               Start Analyzing
               <ArrowRight className="ml-2 h-4 w-4" />
             </button>
-            <button className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium transition-smooth hover:bg-secondary/80">
+            <button 
+              className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium transition-smooth hover:bg-secondary/80"
+              onClick={() => scrollToSection('how-it-works')}
+            >
               Learn More
             </button>
           </div>
