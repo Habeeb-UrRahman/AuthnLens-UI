@@ -7,45 +7,109 @@ import MediaSelector from '@/components/MediaSelector';
 import FileUpload from '@/components/FileUpload';
 import TextAnalyzer from '@/components/TextAnalyzer';
 import ResultsDisplay from '@/components/ResultsDisplay';
+import { Loader2 } from 'lucide-react';
+import modelService from '@/services/modelService';
+import { toast } from "@/components/ui/use-toast";
 
 type MediaType = 'image' | 'video' | 'audio' | 'text';
 
 const Index = () => {
   const [selectedType, setSelectedType] = useState<MediaType>('image');
   const [showResults, setShowResults] = useState(false);
-  const [aiProbability, setAiProbability] = useState(78);
+  const [aiProbability, setAiProbability] = useState(0);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const handleSelectType = (type: MediaType) => {
     setSelectedType(type);
     setShowResults(false);
   };
 
-  const handleFileSelected = (file: File) => {
-    console.log('File selected:', file);
-    // In a real implementation, you would send this file to your backend
-    // for processing with your AI detection model
-    
-    // Simulate processing delay
-    setTimeout(() => {
-      // Mock result - in reality this would come from your ML model
-      const mockProbability = Math.floor(Math.random() * 100);
-      setAiProbability(mockProbability);
+  const handleFileSelected = async (file: File) => {
+    try {
+      setIsAnalyzing(true);
+      console.log('Processing file:', file.name);
+      
+      let probability = 0;
+      
+      if (selectedType === 'image') {
+        // Create an image element and load the file
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        await new Promise(resolve => { img.onload = resolve; });
+        
+        // Create a canvas to get ImageData
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, img.width, img.height);
+        
+        // Process the image
+        probability = await modelService.analyzeImage(imageData);
+      } 
+      else if (selectedType === 'video') {
+        // Create video element and load the file
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.muted = true;
+        await new Promise(resolve => { video.onloadedmetadata = resolve; });
+        
+        // Process the video
+        probability = await modelService.analyzeVideo(video);
+      }
+      else if (selectedType === 'audio') {
+        // Create audio context and decode the file
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const fileBuffer = await file.arrayBuffer();
+        const audioBuffer = await audioContext.decodeAudioData(fileBuffer);
+        
+        // Process the audio
+        probability = await modelService.analyzeAudio(audioBuffer);
+      }
+      
+      setAiProbability(probability);
       setShowResults(true);
-    }, 1500);
+      toast({
+        title: "Analysis Complete",
+        description: "We've processed your content and generated results.",
+      });
+    } catch (error) {
+      console.error('Error processing file:', error);
+      toast({
+        title: "Processing Error",
+        description: "There was an error analyzing your content. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
-  const handleTextAnalyze = (text: string) => {
-    console.log('Analyzing text:', text.substring(0, 100) + '...');
-    // In a real implementation, you would send this text to your backend
-    // for processing with your AI detection model
-    
-    // Simulate processing delay
-    setTimeout(() => {
-      // Mock result - in reality this would come from your ML model
-      const mockProbability = Math.floor(Math.random() * 100);
-      setAiProbability(mockProbability);
+  const handleTextAnalyze = async (text: string) => {
+    try {
+      setIsAnalyzing(true);
+      console.log('Analyzing text sample');
+      
+      // Process the text
+      const probability = await modelService.analyzeText(text);
+      
+      setAiProbability(probability);
       setShowResults(true);
-    }, 1500);
+      toast({
+        title: "Analysis Complete",
+        description: "We've processed your text and generated results.",
+      });
+    } catch (error) {
+      console.error('Error analyzing text:', error);
+      toast({
+        title: "Processing Error",
+        description: "There was an error analyzing your text. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -63,13 +127,25 @@ const Index = () => {
                 onSelectType={handleSelectType} 
               />
               
-              {selectedType === 'text' ? (
-                <TextAnalyzer onAnalyze={handleTextAnalyze} />
+              {isAnalyzing ? (
+                <div className="w-full flex flex-col items-center justify-center py-20">
+                  <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+                  <h3 className="text-lg font-medium">Analyzing your content...</h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    This may take a moment depending on the size and complexity.
+                  </p>
+                </div>
               ) : (
-                <FileUpload 
-                  mediaType={selectedType} 
-                  onFileSelected={handleFileSelected} 
-                />
+                <>
+                  {selectedType === 'text' ? (
+                    <TextAnalyzer onAnalyze={handleTextAnalyze} />
+                  ) : (
+                    <FileUpload 
+                      mediaType={selectedType} 
+                      onFileSelected={handleFileSelected} 
+                    />
+                  )}
+                </>
               )}
               
               <ResultsDisplay 

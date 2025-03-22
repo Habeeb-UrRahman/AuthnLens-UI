@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Shield } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -11,9 +12,9 @@ const Navbar = () => {
           className="text-xl font-medium text-primary flex items-center gap-2 transition-smooth hover:opacity-80"
         >
           <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
-            <div className="w-4 h-4 rounded-full bg-primary animate-pulse-slow"></div>
+            <Shield className="w-4 h-4 text-primary" />
           </div>
-          <span>ContentDetect</span>
+          <span>AuthenLens</span>
         </Link>
         
         <div className="flex items-center gap-6">

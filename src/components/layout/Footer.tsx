@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Shield } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -13,9 +14,9 @@ const Footer = () => {
               className="text-lg font-medium text-primary flex items-center gap-2"
             >
               <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full bg-primary"></div>
+                <Shield className="w-3 h-3 text-primary" />
               </div>
-              <span>ContentDetect</span>
+              <span>AuthenLens</span>
             </Link>
             <p className="text-sm text-muted-foreground mt-2">
               Multimodal AI-generated content detection system
@@ -46,7 +47,7 @@ const Footer = () => {
         
         <div className="mt-8 pt-4 border-t border-border">
           <p className="text-center text-xs text-muted-foreground">
-            © {new Date().getFullYear()} ContentDetect. All rights reserved. University Research Project.
+            © {new Date().getFullYear()} AuthenLens. All rights reserved. University Research Project.
           </p>
         </div>
       </div>

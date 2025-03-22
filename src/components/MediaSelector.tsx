@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { FileImage, FileVideo, FileAudio, FileText } from 'lucide-react';
+import { FileImage, FileVideo, FileAudio, FileText, Check } from 'lucide-react';
 
 type MediaType = 'image' | 'video' | 'audio' | 'text';
 
@@ -32,20 +32,32 @@ const MediaSelector: React.FC<MediaSelectorProps> = ({ selectedType, onSelectTyp
           return (
             <div
               key={type.id}
-              className={`media-option ${isSelected ? 'active' : ''}`}
+              className={`relative overflow-hidden group transition-all duration-300 ease-out
+                ${isSelected 
+                  ? 'bg-primary/5 border-primary shadow-md' 
+                  : 'bg-white/80 border-transparent hover:bg-white/90 hover:-translate-y-1'} 
+                border rounded-xl p-6 cursor-pointer`}
               onClick={() => onSelectType(type.id as MediaType)}
               aria-selected={isSelected}
             >
-              <div className={`w-12 h-12 rounded-full ${isSelected ? 'bg-primary/10' : 'bg-secondary'} flex items-center justify-center mb-4 transition-smooth`}>
+              <div className={`w-12 h-12 rounded-full 
+                ${isSelected ? 'bg-primary/20' : 'bg-secondary'} 
+                flex items-center justify-center mb-4 transition-smooth group-hover:scale-110`}>
                 <Icon className={`w-6 h-6 ${isSelected ? 'text-primary' : 'text-muted-foreground'} transition-smooth`} />
               </div>
               
               <h3 className="text-lg font-medium mb-1">{type.label}</h3>
-              <p className="text-sm text-center text-muted-foreground">{type.description}</p>
+              <p className="text-sm text-muted-foreground">{type.description}</p>
               
               {isSelected && (
-                <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-primary animate-pulse"></div>
+                <div className="absolute top-3 right-3 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="w-3 h-3 text-white" />
+                </div>
               )}
+              
+              <div className={`absolute bottom-0 left-0 h-1 bg-primary transition-all duration-300 ${
+                isSelected ? 'w-full' : 'w-0 group-hover:w-1/3'
+              }`}></div>
             </div>
           );
         })}
