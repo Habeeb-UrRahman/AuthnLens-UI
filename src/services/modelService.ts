@@ -1,3 +1,4 @@
+
 // This service handles loading and running the trained h5 models
 // It will use TensorFlow.js to load and run the models
 
@@ -76,7 +77,8 @@ class ModelService {
       console.log('ELA image generated successfully');
       
       // Process both original and ELA images
-      const targetSize = [224, 224]; // Size expected by the model
+      // Fix: Use a tuple [224, 224] instead of an array
+      const targetSize: [number, number] = [224, 224]; // Size expected by the model
       
       // Process original image
       console.log('Processing original image...');

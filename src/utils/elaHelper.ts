@@ -50,7 +50,8 @@ export async function createElaImage(imageData: ImageData, quality: number = 90)
     const scaledDiff = tf.mul(diffTensor, tf.scalar(scale));
     
     // Convert back to ImageData
-    const elaArray = await tf.browser.toPixels(scaledDiff);
+    // Fix: Cast the tensor to a Tensor3D type to match toPixels expectations
+    const elaArray = await tf.browser.toPixels(scaledDiff as tf.Tensor3D);
     const elaImageData = new ImageData(
       new Uint8ClampedArray(elaArray),
       imageData.width,
