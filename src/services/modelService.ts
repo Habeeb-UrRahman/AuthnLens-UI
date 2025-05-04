@@ -1,8 +1,8 @@
-
 // This service handles loading and running the trained h5 models
 // It will use TensorFlow.js to load and run the models
 
 import * as tf from '@tensorflow/tfjs';
+import { createElaImage } from '@/utils/elaHelper';
 
 export type ModelType = 'image' | 'video' | 'audio' | 'text';
 
@@ -60,26 +60,58 @@ class ModelService {
 
   /**
    * Process image data through the image model
+   * This updated version processes both the original image and its ELA version
+   * through the dual-input model structure
    */
   async analyzeImage(imageData: ImageData): Promise<number> {
-    const model = await this.loadModel('image');
-    
-    // Preprocess the image
-    const tensor = tf.browser.fromPixels(imageData)
-      .resizeNearestNeighbor([224, 224]) // resize to model input size
-      .toFloat()
-      .expandDims();
-    
-    // Run inference
-    const prediction = model.predict(tensor) as tf.Tensor;
-    const probabilityData = await prediction.data();
-    
-    // Cleanup tensors
-    tensor.dispose();
-    prediction.dispose();
-    
-    // Return AI probability (assuming model output is probability of being AI-generated)
-    return probabilityData[0] * 100;
+    try {
+      console.log('Starting image analysis...');
+      
+      // Load the model
+      const model = await this.loadModel('image');
+      
+      // Create ELA version of the image
+      console.log('Generating ELA image...');
+      const elaImageData = await createElaImage(imageData, 90);
+      console.log('ELA image generated successfully');
+      
+      // Process both original and ELA images
+      const targetSize = [224, 224]; // Size expected by the model
+      
+      // Process original image
+      console.log('Processing original image...');
+      const originalTensor = tf.browser.fromPixels(imageData)
+        .resizeNearestNeighbor(targetSize)
+        .toFloat()
+        .div(255.0)
+        .expandDims(0);
+      
+      // Process ELA image
+      console.log('Processing ELA image...');
+      const elaTensor = tf.browser.fromPixels(elaImageData)
+        .resizeNearestNeighbor(targetSize)
+        .toFloat()
+        .div(255.0)
+        .expandDims(0);
+      
+      // The model expects an array of two inputs [originalImage, elaImage]
+      console.log('Running inference with dual inputs...');
+      const prediction = model.predict([originalTensor, elaTensor]) as tf.Tensor;
+      const probabilityData = await prediction.data();
+      
+      console.log('Raw prediction value:', probabilityData[0]);
+      
+      // Cleanup tensors
+      originalTensor.dispose();
+      elaTensor.dispose();
+      prediction.dispose();
+      
+      // Return AI probability (model outputs values between 0-1, multiply by 100 for percentage)
+      return probabilityData[0] * 100;
+    } catch (error) {
+      console.error('Error in image analysis:', error);
+      throw new Error('Failed to analyze image');
+    }
   }
 
   /**

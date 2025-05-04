@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Upload, X, FileImage, FileVideo, FileAudio } from 'lucide-react';
 
@@ -100,6 +99,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ mediaType, onFileSelected }) =>
     }
   };
 
+  const handleAnalyzeClick = () => {
+    if (file) {
+      onFileSelected(file);
+    }
+  };
+
   const { icon: Icon, label, description, accept, fileTypes } = mediaTypeInfo[mediaType];
 
   return (
@@ -192,7 +197,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ mediaType, onFileSelected }) =>
             )}
             
             <div className="flex justify-center mt-6">
-              <button className="px-6 py-2.5 rounded-lg bg-primary text-white font-medium transition-smooth hover:bg-primary/90">
+              <button 
+                className="px-6 py-2.5 rounded-lg bg-primary text-white font-medium transition-smooth hover:bg-primary/90"
+                onClick={handleAnalyzeClick}
+              >
                 Analyze {mediaType}
               </button>
             </div>
