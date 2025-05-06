@@ -1,116 +1,41 @@
 
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Hero from '@/components/Hero';
-import MediaSelector from '@/components/MediaSelector';
-import FileUpload from '@/components/FileUpload';
-import TextAnalyzer from '@/components/TextAnalyzer';
-import ResultsDisplay from '@/components/ResultsDisplay';
-import { Loader2 } from 'lucide-react';
-import modelService from '@/services/modelService';
-import { toast } from "@/components/ui/use-toast";
-
-type MediaType = 'image' | 'video' | 'audio' | 'text';
+import { Button } from '@/components/ui/button';
+import { FileImage, FileVideo, FileAudio, FileText, ArrowRight } from 'lucide-react';
 
 const Index = () => {
-  const [selectedType, setSelectedType] = useState<MediaType>('image');
-  const [showResults, setShowResults] = useState(false);
-  const [aiProbability, setAiProbability] = useState(0);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-
-  const handleSelectType = (type: MediaType) => {
-    setSelectedType(type);
-    setShowResults(false);
-  };
-
-  const handleFileSelected = async (file: File) => {
-    try {
-      setIsAnalyzing(true);
-      console.log('Processing file:', file.name);
-      
-      let probability = 0;
-      
-      if (selectedType === 'image') {
-        // Create an image element and load the file
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        await new Promise(resolve => { img.onload = resolve; });
-        
-        // Create a canvas to get ImageData
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d')!;
-        ctx.drawImage(img, 0, 0);
-        const imageData = ctx.getImageData(0, 0, img.width, img.height);
-        
-        // Process the image
-        probability = await modelService.analyzeImage(imageData);
-      } 
-      else if (selectedType === 'video') {
-        // Create video element and load the file
-        const video = document.createElement('video');
-        video.src = URL.createObjectURL(file);
-        video.muted = true;
-        await new Promise(resolve => { video.onloadedmetadata = resolve; });
-        
-        // Process the video
-        probability = await modelService.analyzeVideo(video);
-      }
-      else if (selectedType === 'audio') {
-        // Create audio context and decode the file
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-        const fileBuffer = await file.arrayBuffer();
-        const audioBuffer = await audioContext.decodeAudioData(fileBuffer);
-        
-        // Process the audio
-        probability = await modelService.analyzeAudio(audioBuffer);
-      }
-      
-      setAiProbability(probability);
-      setShowResults(true);
-      toast({
-        title: "Analysis Complete",
-        description: "We've processed your content and generated results.",
-      });
-    } catch (error) {
-      console.error('Error processing file:', error);
-      toast({
-        title: "Processing Error",
-        description: "There was an error analyzing your content. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzing(false);
+  const navigate = useNavigate();
+  
+  const detectionTypes = [
+    {
+      title: 'Image Detection',
+      description: 'Detect AI-generated or manipulated images using our advanced dual-input neural network.',
+      icon: FileImage,
+      path: '/image'
+    },
+    {
+      title: 'Video Detection',
+      description: 'Analyze video content to identify AI-generated frames and sequences.',
+      icon: FileVideo,
+      path: '/video'
+    },
+    {
+      title: 'Audio Detection',
+      description: 'Identify synthetic audio or voice cloning using spectral analysis.',
+      icon: FileAudio,
+      path: '/audio'
+    },
+    {
+      title: 'Text Detection',
+      description: 'Determine if text was written by AI or a human through linguistic pattern analysis.',
+      icon: FileText,
+      path: '/text'
     }
-  };
-
-  const handleTextAnalyze = async (text: string) => {
-    try {
-      setIsAnalyzing(true);
-      console.log('Analyzing text sample');
-      
-      // Process the text
-      const probability = await modelService.analyzeText(text);
-      
-      setAiProbability(probability);
-      setShowResults(true);
-      toast({
-        title: "Analysis Complete",
-        description: "We've processed your text and generated results.",
-      });
-    } catch (error) {
-      console.error('Error analyzing text:', error);
-      toast({
-        title: "Processing Error",
-        description: "There was an error analyzing your text. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -119,40 +44,49 @@ const Index = () => {
       <main className="flex-1">
         <Hero />
         
-        <section className="py-16" id="content-type-section">
+        <section className="py-16" id="detection-types">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto">
-              <MediaSelector 
-                selectedType={selectedType} 
-                onSelectType={handleSelectType} 
-              />
-              
-              {isAnalyzing ? (
-                <div className="w-full flex flex-col items-center justify-center py-20">
-                  <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
-                  <h3 className="text-lg font-medium">Analyzing your content...</h3>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    This may take a moment depending on the size and complexity.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {selectedType === 'text' ? (
-                    <TextAnalyzer onAnalyze={handleTextAnalyze} />
-                  ) : (
-                    <FileUpload 
-                      mediaType={selectedType} 
-                      onFileSelected={handleFileSelected} 
-                    />
-                  )}
-                </>
-              )}
-              
-              <ResultsDisplay 
-                showResults={showResults} 
-                aiProbability={aiProbability} 
-                mediaType={selectedType} 
-              />
+            <div className="max-w-4xl mx-auto text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Choose Detection Type</h2>
+              <p className="text-muted-foreground">
+                AuthenLens offers multiple AI detection solutions. Select the content type you want to analyze.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+              {detectionTypes.map((type) => {
+                const Icon = type.icon;
+                
+                return (
+                  <div 
+                    key={type.path}
+                    className="glass-panel border border-border/50 rounded-xl p-6 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer"
+                    onClick={() => navigate(type.path)}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-6 h-6 text-primary" />
+                      </div>
+                      
+                      <div className="text-left">
+                        <h3 className="text-xl font-semibold mb-2 group-hover:text-primary">{type.title}</h3>
+                        <p className="text-muted-foreground mb-4">{type.description}</p>
+                        <Button 
+                          variant="outline" 
+                          className="flex items-center gap-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(type.path);
+                          }}
+                        >
+                          Try it now
+                          <ArrowRight className="w-4 h-4 ml-1" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>

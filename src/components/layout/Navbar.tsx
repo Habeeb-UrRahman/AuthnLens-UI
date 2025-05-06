@@ -26,28 +26,33 @@ const Navbar = () => {
             <span className="absolute left-0 bottom-[-4px] w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
-            to="/about" 
+            to="/image" 
             className="text-sm font-medium text-foreground/80 transition-smooth hover:text-primary relative group"
           >
-            About
+            Image Detection
             <span className="absolute left-0 bottom-[-4px] w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
           <Link 
-            to="/how-it-works" 
+            to="/video" 
             className="text-sm font-medium text-foreground/80 transition-smooth hover:text-primary relative group"
           >
-            How it works
+            Video Detection
             <span className="absolute left-0 bottom-[-4px] w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
           </Link>
-          <a 
-            href="https://github.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
+          <Link 
+            to="/audio" 
             className="text-sm font-medium text-foreground/80 transition-smooth hover:text-primary relative group"
           >
-            GitHub
+            Audio Detection
             <span className="absolute left-0 bottom-[-4px] w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-          </a>
+          </Link>
+          <Link 
+            to="/text" 
+            className="text-sm font-medium text-foreground/80 transition-smooth hover:text-primary relative group"
+          >
+            Text Detection
+            <span className="absolute left-0 bottom-[-4px] w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+          </Link>
         </div>
 
         <div className="md:hidden">
